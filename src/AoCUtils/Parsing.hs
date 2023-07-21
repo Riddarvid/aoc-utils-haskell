@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
 module AoCUtils.Parsing (
+  unsignedIntegerParser,
+  signedIntegerParser,
   parseUnsignedInts,
   parseSignedInts
 ) where
