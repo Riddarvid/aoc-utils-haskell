@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       AoCUtils.Geometry
+      AoCUtils.Graphics
       Lib
   other-modules:
       Paths_aoc_utils
@@ -34,5 +35,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , containers >=0.6.7
+    , gloss >=1.13.2.2
     , hashable >=1.4.2.0
   default-language: Haskell2010
