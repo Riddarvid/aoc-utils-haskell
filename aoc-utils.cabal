@@ -31,7 +31,6 @@ library
       AoCUtils.Graphs
       AoCUtils.Parsing
       AoCUtils.Show
-      Lib
   other-modules:
       Paths_aoc_utils
   hs-source-dirs:
