@@ -1,3 +1,4 @@
 .stack-work/
 *~
 aoc-utils.cabal
+.vscode
