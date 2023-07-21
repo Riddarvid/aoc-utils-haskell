@@ -4,6 +4,7 @@ module AoCUtils.Days (
   Input,
   ExpectedResult,
   Solver,
+  Solution,
   showSolution
 ) where
 import           Control.Monad.Cont (MonadIO (liftIO))
