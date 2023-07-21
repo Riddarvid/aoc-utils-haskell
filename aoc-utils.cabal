@@ -29,6 +29,7 @@ library
       AoCUtils.Geometry
       AoCUtils.Graphics
       AoCUtils.Graphs
+      AoCUtils.Interactive
       AoCUtils.Parsing
       AoCUtils.Show
   other-modules:
@@ -42,6 +43,8 @@ library
     , gloss >=1.13.2.2
     , hashable >=1.4.2.0
     , mtl >=2.2.2
+    , optparse-applicative >=0.17.0.0
     , parsec >=3.1.16.1
+    , time >=1.12.2
     , unordered-containers >=0.2.19.1
   default-language: Haskell2010

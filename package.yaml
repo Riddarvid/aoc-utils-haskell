@@ -27,6 +27,8 @@ dependencies:
   - parsec >= 3.1.16.1
   - unordered-containers >= 0.2.19.1
   - mtl >= 2.2.2
+  - optparse-applicative >= 0.17.0.0
+  - time >= 1.12.2
 
 ghc-options:
   - -Wall
