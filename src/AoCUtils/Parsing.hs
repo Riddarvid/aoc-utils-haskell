@@ -6,21 +6,27 @@ module AoCUtils.Parsing (
   parseSignedInts
 ) where
 
-import           Text.Parsec (ParseError, Parsec, anyChar, char, digit,
-                              lookAhead, many1, manyTill, optionMaybe, parse,
-                              sepEndBy)
+import           Text.Parsec     (Parsec, char, digit, many1, optionMaybe)
+import           Text.Regex.PCRE (AllTextMatches (getAllTextMatches), (=~))
 
-parseUnsignedInts :: (Num a, Read a) => String -> Either ParseError [a]
-parseUnsignedInts = parseMaybe (manyParser unsignedIntegerParser)
+-- Regex parsers
 
-parseSignedInts :: (Num a, Read a) => String -> Either ParseError [a]
-parseSignedInts = parseMaybe (manyParser signedIntegerParser)
+parseUnsignedInts :: (Num a, Read a) => String -> [a]
+parseUnsignedInts = parseMany unsignedIntRegex
 
-parseMaybe :: Parsec String () a -> String -> Either ParseError a
-parseMaybe p = parse p ""
+parseSignedInts :: (Num a, Read a) => String -> [a]
+parseSignedInts = parseMany signedIntRegex
 
-manyParser :: Parsec String () a -> Parsec String () [a]
-manyParser p = sepEndBy p (manyTill anyChar (lookAhead p))
+parseMany :: (Read a) => String -> String -> [a]
+parseMany regex str = map read (getAllTextMatches (str =~ regex))
+
+unsignedIntRegex :: String
+unsignedIntRegex = "\\d+"
+
+signedIntRegex :: String
+signedIntRegex = "-?" ++ unsignedIntRegex
+
+-- Parsec parsers
 
 unsignedIntegerParser :: (Num a, Read a) => Parsec String () a
 unsignedIntegerParser = read <$> many1 digit
