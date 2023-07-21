@@ -6,22 +6,21 @@ module AoCUtils.Parsing (
   parseSignedInts
 ) where
 
-import           Text.Parsec (Parsec, anyToken, char, digit, many1, optionMaybe,
-                              parse, sepBy)
+import           Text.Parsec (ParseError, Parsec, anyChar, char, digit,
+                              lookAhead, many1, manyTill, optionMaybe, parse,
+                              sepEndBy)
 
-parseUnsignedInts :: (Num a, Read a) => String -> Maybe [a]
+parseUnsignedInts :: (Num a, Read a) => String -> Either ParseError [a]
 parseUnsignedInts = parseMaybe (manyParser unsignedIntegerParser)
 
-parseSignedInts :: (Num a, Read a) => String -> Maybe [a]
+parseSignedInts :: (Num a, Read a) => String -> Either ParseError [a]
 parseSignedInts = parseMaybe (manyParser signedIntegerParser)
 
-parseMaybe :: Parsec String () a -> String -> Maybe a
-parseMaybe p str = case parse p "" str of
-  Right res -> Just res
-  Left _    -> Nothing
+parseMaybe :: Parsec String () a -> String -> Either ParseError a
+parseMaybe p = parse p ""
 
 manyParser :: Parsec String () a -> Parsec String () [a]
-manyParser p = sepBy p anyToken
+manyParser p = sepEndBy p (manyTill anyChar (lookAhead p))
 
 unsignedIntegerParser :: (Num a, Read a) => Parsec String () a
 unsignedIntegerParser = read <$> many1 digit
