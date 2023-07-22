@@ -33,6 +33,7 @@ library
       AoCUtils.Parsec
       AoCUtils.Regex
       AoCUtils.Show
+      AoCUtils.Test
   other-modules:
       Paths_aoc_utils
   hs-source-dirs:
