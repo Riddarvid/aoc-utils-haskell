@@ -19,13 +19,17 @@ module AoCUtils.Geometry (
     moveBy,
     scaleBy,
     vectorBetween
-  )
+  ),
+  findDimensions
 ) where
 import           Control.Applicative (Applicative (liftA2))
 import           Data.Hashable       (Hashable)
 import           GHC.Generics        (Generic)
 
-data Point2 a = P2 a a
+data Point2 a = P2 {
+  p2X :: a,
+  p2Y :: a
+}
   deriving (Generic)
 
 type Vector2 = Point2
@@ -75,7 +79,11 @@ instance (Show a) => Show (Point2 a) where
 
 instance Point Point2
 
-data Point3 a = P3 a a a
+data Point3 a = P3 {
+  p3X :: a,
+  p3Y :: a,
+  p3Z :: a
+}
   deriving (Generic)
 
 type Vector3 = Point3
@@ -121,3 +129,9 @@ class (Applicative p, Foldable p) => Point p where
 
   vectorBetween :: Num a => p a -> p a -> p a
   vectorBetween pStart pEnd = (-) <$> pEnd <*> pStart
+
+findDimensions :: (Integral a, Foldable t, Functor t) => t (Point2 a) -> (a, a, a, a)
+findDimensions points = (minimum xs, minimum ys, maximum xs, maximum ys)
+  where
+    xs = fmap (\(P2 x _) -> x) points
+    ys = fmap (\(P2 _ y) -> y) points
