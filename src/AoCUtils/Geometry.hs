@@ -2,7 +2,7 @@
 {-# LANGUAGE InstanceSigs  #-}
 
 module AoCUtils.Geometry (
-  Point2(P2),
+  Point2(..),
   Vector2,
   upV,
   rightV,
@@ -10,7 +10,7 @@ module AoCUtils.Geometry (
   leftV,
   turnLeft,
   turnRight,
-  Point3(P3),
+  Point3(..),
   Vector3,
   Point(
     origo,
