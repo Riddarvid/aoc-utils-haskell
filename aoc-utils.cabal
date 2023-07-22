@@ -30,7 +30,8 @@ library
       AoCUtils.Graphics
       AoCUtils.Graphs
       AoCUtils.Interactive
-      AoCUtils.Parsing
+      AoCUtils.Parsec
+      AoCUtils.Regex
       AoCUtils.Show
   other-modules:
       Paths_aoc_utils
