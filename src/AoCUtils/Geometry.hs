@@ -25,6 +25,7 @@ module AoCUtils.Geometry (
 import           Control.Applicative (Applicative (liftA2))
 import           Data.Hashable       (Hashable)
 import           GHC.Generics        (Generic)
+import Data.Foldable (toList)
 
 data Point2 a = P2 {
   p2X :: a,
@@ -130,8 +131,9 @@ class (Applicative p, Foldable p) => Point p where
   vectorBetween :: Num a => p a -> p a -> p a
   vectorBetween pStart pEnd = (-) <$> pEnd <*> pStart
 
-findDimensions :: (Integral a, Foldable t, Functor t) => t (Point2 a) -> (a, a, a, a)
+findDimensions :: (Integral a, Foldable t) => t (Point2 a) -> (a, a, a, a)
 findDimensions points = (minimum xs, minimum ys, maximum xs, maximum ys)
   where
-    xs = fmap (\(P2 x _) -> x) points
-    ys = fmap (\(P2 _ y) -> y) points
+    points' = toList points
+    xs = map p2X points'
+    ys = map p2Y points'

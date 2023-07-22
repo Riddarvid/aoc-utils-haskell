@@ -8,7 +8,7 @@ import           Data.Hashable     (Hashable)
 import           Data.HashSet      (HashSet)
 import qualified Data.HashSet      as HS
 
-showPoints :: (Integral a, Hashable a, Foldable t, Functor t) => t (Point2 a) -> String
+showPoints :: (Integral a, Hashable a, Foldable t) => t (Point2 a) -> String
 showPoints points = unlines $ map (showPointRow pointSet minX maxX) [minY .. maxY]
   where
     (minX, minY, maxX, maxY) = findDimensions points
