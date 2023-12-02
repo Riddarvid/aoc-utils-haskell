@@ -6,24 +6,19 @@ module AoCUtils.Interactive (
 
 import           AoCUtils.Days       (Solver, readInput, showSolution)
 import           Control.Applicative ((<**>), (<|>))
-import           Data.HashMap.Lazy   (HashMap)
-import qualified Data.HashMap.Lazy   as HM
-import           Data.Maybe          (fromMaybe)
 import           Data.Time           (diffUTCTime, getCurrentTime)
 import           Options.Applicative (Parser, ParserInfo, argument, auto,
                                       execParser, fullDesc, header, help,
                                       helper, info, metavar, progDesc, short,
                                       strOption)
 
-aocMain :: [Solver] -> Maybe (HashMap String (IO ())) -> IO ()
-aocMain solvers graphicalMap = do
+aocMain :: [Solver] -> (String -> IO ()) -> IO ()
+aocMain solvers visualizations = do
   options <- execParser opts
   case options of
     Textual day     -> printSolutions solvers [day]
-    Graphical visId -> displayGraphical graphicalMap' visId
+    Graphical visId -> visualizations visId
     TextualAll      -> printSolutions solvers [1 .. length solvers]
-  where
-    graphicalMap' = fromMaybe HM.empty graphicalMap
 
 -- Opts parsing
 
@@ -73,13 +68,6 @@ printSolution solvers day = do
   putStrLn $ showSolution solution
   stopTime <- getCurrentTime
   putStrLn $ "\nSolved in " ++ show (diffUTCTime stopTime startTime)
-
--- Visualizations
-
-displayGraphical :: HashMap String (IO ()) -> String -> IO ()
-displayGraphical graphicalMap str = case HM.lookup str graphicalMap of
-  Nothing  -> error $ "No visualization mapped to identifier: " ++ str
-  Just vis -> vis
 
 -- Utils ----------------------------
 
