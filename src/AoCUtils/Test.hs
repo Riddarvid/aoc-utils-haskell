@@ -1,18 +1,19 @@
 module AoCUtils.Test (aocTests) where
+import           AoCUtils.Config      (Config (cfgInputDir, cfgResultsDir, cfgSolvers))
 import           AoCUtils.Days        (ExpectedResult, Input, Solution, Solver,
                                        readInput, readResults)
 import           Control.Monad        (when)
 import           Control.Monad.Writer (MonadWriter (tell), Writer, execWriter)
 
-aocTests :: [Solver] -> IO ()
-aocTests solvers = do
+aocTests :: Config -> IO ()
+aocTests cfg = do
   putStrLn ""
-  let days = [1 .. length solvers]
-  runTests solvers True days
+  let days = [1 .. length $ cfgSolvers cfg]
+  runTests cfg True days
 
-runTests :: [Solver] -> Bool -> [Int] -> IO ()
-runTests solvers verbose days = do
-  results <- checkSolutions solvers days
+runTests :: Config -> Bool -> [Int] -> IO ()
+runTests cfg verbose days = do
+  results <- checkSolutions cfg days
   when verbose (printResults False results)
   putStrLn "\n\n-----------------------------\n\n"
   if all succeeded results
@@ -57,14 +58,14 @@ testFailed (TestResult _ p1 p2) = partFailed p1 || partFailed p2
 data PartResult = Pass | Fail String String | NA String
 data TestResult = TestResult Int PartResult PartResult
 
-checkSolutions :: [Solver] -> [Int] -> IO [TestResult]
-checkSolutions solvers = traverse (checkSolution solvers)
+checkSolutions :: Config -> [Int] -> IO [TestResult]
+checkSolutions cfg = traverse (checkSolution cfg)
 
-checkSolution :: [Solver] -> Int -> IO TestResult
-checkSolution solvers day = do
-  let solver = solvers !! (day - 1)
-  input <- readInput day
-  expectedResult <- readResults day
+checkSolution :: Config -> Int -> IO TestResult
+checkSolution cfg day = do
+  let solver = cfgSolvers cfg !! (day - 1)
+  input <- readInput (cfgInputDir cfg) day
+  expectedResult <- readResults (cfgResultsDir cfg) day
   let (r1, r2) = checkResult solver input expectedResult
   return (TestResult day r1 r2)
 

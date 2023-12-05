@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      AoCUtils.Config
       AoCUtils.Days
       AoCUtils.Geometry
       AoCUtils.Graphics
@@ -43,6 +44,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.7
+    , filepath >=1.4.2.2
     , gloss >=1.13.2.2
     , hashable >=1.4.2.0
     , mtl >=2.2.2

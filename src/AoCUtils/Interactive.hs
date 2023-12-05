@@ -4,6 +4,7 @@ module AoCUtils.Interactive (
   printSolutions
 ) where
 
+import           AoCUtils.Config     (Config (cfgInputDir, cfgSolvers, cfgVisualizations))
 import           AoCUtils.Days       (Solver, readInput, showSolution)
 import           Control.Applicative ((<**>), (<|>))
 import           Data.Time           (diffUTCTime, getCurrentTime)
@@ -12,13 +13,13 @@ import           Options.Applicative (Parser, ParserInfo, argument, auto,
                                       helper, info, metavar, progDesc, short,
                                       strOption)
 
-aocMain :: [Solver] -> (String -> IO ()) -> IO ()
-aocMain solvers visualizations = do
+aocMain :: Config -> IO ()
+aocMain cfg = do
   options <- execParser opts
   case options of
-    Textual day     -> printSolutions solvers [day]
-    Graphical visId -> visualizations visId
-    TextualAll      -> printSolutions solvers [1 .. length solvers]
+    Textual day     -> printSolutions cfg [day]
+    Graphical visId -> cfgVisualizations cfg visId
+    TextualAll      -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
 
 -- Opts parsing
 
@@ -49,22 +50,22 @@ allParser = pure TextualAll
 
 -- Textual interface
 
-printSolutions :: [Solver] -> [Int] -> IO ()
-printSolutions solvers days = do
+printSolutions :: Config -> [Int] -> IO ()
+printSolutions cfg days = do
   startTime <- getCurrentTime
-  mapM_ (printSolution solvers) days
+  mapM_ (printSolution cfg) days
   stopTime <- getCurrentTime
   putStrLn ""
   putStrLn dashLine
   putStrLn $ "\nAll puzzles solved in " ++ show (diffUTCTime stopTime startTime)
 
-printSolution :: [Solver] -> Int -> IO ()
-printSolution solvers day = do
+printSolution :: Config -> Int -> IO ()
+printSolution cfg day = do
   startTime <- getCurrentTime
   putStrLn dashLine
   putStrLn $ "Day " ++ show day
-  input <- readInput day
-  let solution = (solvers !! (day - 1)) input
+  input <- readInput (cfgInputDir cfg) day
+  let solution = (cfgSolvers cfg !! (day - 1)) input
   putStrLn $ showSolution solution
   stopTime <- getCurrentTime
   putStrLn $ "\nSolved in " ++ show (diffUTCTime stopTime startTime)
