@@ -31,10 +31,10 @@ library
       AoCUtils.Graphics
       AoCUtils.Graphs
       AoCUtils.Interactive
+      AoCUtils.Matrices
       AoCUtils.Parsec
       AoCUtils.Regex
       AoCUtils.Show
-      AoCUtils.Strings
       AoCUtils.Test
   other-modules:
       Paths_aoc_utils

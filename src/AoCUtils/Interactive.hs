@@ -5,7 +5,7 @@ module AoCUtils.Interactive (
 ) where
 
 import           AoCUtils.Config     (Config (cfgInputDir, cfgSolvers, cfgVisualizations))
-import           AoCUtils.Days       (Solver, readInput, showSolution)
+import           AoCUtils.Days       (readInput, showSolution)
 import           Control.Applicative ((<**>), (<|>))
 import           Data.Time           (diffUTCTime, getCurrentTime)
 import           Options.Applicative (Parser, ParserInfo, argument, auto,
