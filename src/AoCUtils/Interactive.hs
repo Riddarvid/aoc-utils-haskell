@@ -4,46 +4,38 @@ module AoCUtils.Interactive (
   printSolutions
 ) where
 
-import           AoCUtils.Config     (Config (cfgInputDir, cfgSolvers, cfgVisualizations))
+import           AoCUtils.Config     (Config (cfgInputDir, cfgSolvers))
 import           AoCUtils.Days       (readInput, showSolution)
 import           Control.Applicative ((<**>), (<|>))
 import           Data.Time           (diffUTCTime, getCurrentTime)
 import           Options.Applicative (Parser, ParserInfo, argument, auto,
                                       execParser, fullDesc, header, help,
-                                      helper, info, metavar, progDesc, short,
-                                      strOption)
+                                      helper, info, metavar, progDesc)
 
 aocMain :: Config -> IO ()
 aocMain cfg = do
   options <- execParser opts
   case options of
     Textual day     -> printSolutions cfg [day]
-    Graphical visId -> cfgVisualizations cfg visId
     TextualAll      -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
 
 -- Opts parsing
 
-data ProgramOpts = Textual Int | Graphical String | TextualAll
+data ProgramOpts = Textual Int | TextualAll
 
 opts :: ParserInfo ProgramOpts
 opts = info (optsParser <**> helper)
   (fullDesc
-  <> progDesc "Solve a day or show visualization"
+  <> progDesc "Solve a day"
   <> header "AoC Solver" )
 
 optsParser :: Parser ProgramOpts
-optsParser = textualParser <|> graphicalParser <|> allParser
+optsParser = textualParser <|> allParser
 
 textualParser :: Parser ProgramOpts
 textualParser = Textual <$> argument auto (
   metavar "DAY"
   <> help "Day to run.")
-
-graphicalParser :: Parser ProgramOpts
-graphicalParser = Graphical <$> strOption
-  (short 'g'
-  <> metavar "VISUALIZATION"
-  <> help "Visualization to run")
 
 allParser :: Parser ProgramOpts
 allParser = pure TextualAll

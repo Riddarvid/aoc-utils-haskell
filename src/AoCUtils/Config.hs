@@ -7,18 +7,12 @@ import           AoCUtils.Days (Solver)
 data Config = Config {
   cfgSolvers        :: [Solver],
   cfgInputDir       :: FilePath,
-  cfgResultsDir     :: FilePath,
-  cfgVisualizations :: String -> IO ()
+  cfgResultsDir     :: FilePath
 }
 
-mkConfig :: [Solver] -> FilePath -> FilePath -> Maybe (String -> IO ()) -> Config
-mkConfig solvers inputDir resultsDir vis = Config {
+mkConfig :: [Solver] -> FilePath -> FilePath -> Config
+mkConfig solvers inputDir resultsDir = Config {
   cfgSolvers = solvers,
   cfgInputDir = inputDir,
-  cfgResultsDir = resultsDir,
-  cfgVisualizations = vis'
+  cfgResultsDir = resultsDir
   }
-  where
-    vis' = case vis of
-      Nothing    -> error "No visualizations provided"
-      Just vis'' -> vis''
