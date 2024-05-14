@@ -28,7 +28,6 @@ library
       AoCUtils.Config
       AoCUtils.Days
       AoCUtils.Geometry
-      AoCUtils.Graphics
       AoCUtils.Graphs
       AoCUtils.Interactive
       AoCUtils.Matrices
@@ -45,7 +44,6 @@ library
       base >=4.7 && <5
     , containers >=0.6.7
     , filepath >=1.4.2.2
-    , gloss >=1.13.2.2
     , hashable >=1.4.2.0
     , mtl >=2.2.2
     , optparse-applicative >=0.17.0.0
