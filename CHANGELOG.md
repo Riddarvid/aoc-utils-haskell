@@ -8,4 +8,8 @@ and this project adheres to the
 
 ## Unreleased
 
-## 0.1.0.0 - YYYY-MM-DD
+## [1.1.0] - 2024-12-01
+
+### Changed
+
+- Upgrade Haskell version to 9.6.6, lts 22.43

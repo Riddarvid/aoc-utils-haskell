@@ -1,5 +1,5 @@
 name: aoc-utils
-version: 0.1.0.0
+version: 1.1.0
 github: "Riddarvid/aoc-utils"
 license: BSD3
 author: "Riddarvid"
@@ -21,15 +21,15 @@ description: Please see the README on GitHub at <https://github.com/Riddarvid/ao
 
 dependencies:
   - base >= 4.7 && < 5
-  - hashable >= 1.4.2.0
-  - containers >= 0.6.7
-  - parsec >= 3.1.16.1
-  - unordered-containers >= 0.2.19.1
-  - mtl >= 2.2.2
-  - optparse-applicative >= 0.17.0.0
-  - time >= 1.12.2
-  - regex-pcre >= 0.95.0.0
-  - filepath >= 1.4.2.2
+  - hashable
+  - containers
+  - parsec
+  - unordered-containers
+  - mtl
+  - optparse-applicative
+  - time
+  - regex-pcre
+  - filepath
 
 ghc-options:
   - -Wall

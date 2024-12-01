@@ -22,10 +22,9 @@ module AoCUtils.Geometry (
   ),
   findDimensions
 ) where
-import           Control.Applicative (Applicative (liftA2))
-import           Data.Hashable       (Hashable)
-import           GHC.Generics        (Generic)
-import Data.Foldable (toList)
+import           Data.Foldable (toList)
+import           Data.Hashable (Hashable)
+import           GHC.Generics  (Generic)
 
 data Point2 a = P2 {
   p2X :: a,

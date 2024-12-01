@@ -7,8 +7,8 @@ module AoCUtils.Days (
   Solution,
   showSolution
 ) where
-import           Control.Monad.Cont (MonadIO (liftIO))
-import           System.FilePath    ((</>))
+import           Control.Monad.IO.Class (MonadIO (liftIO))
+import           System.FilePath        ((</>))
 
 type Solution = (String, String)
 
