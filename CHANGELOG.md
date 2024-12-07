@@ -8,6 +8,12 @@ and this project adheres to the
 
 ## Unreleased
 
+## [1.2.0] - 2024-12-07
+
+### Changed
+
+- More general map construction from matrices
+
 ## [1.1.0] - 2024-12-01
 
 ### Changed

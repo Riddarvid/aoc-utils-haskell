@@ -30,7 +30,7 @@ data Point2 a = P2 {
   p2X :: a,
   p2Y :: a
 }
-  deriving (Generic)
+  deriving (Generic, Eq, Ord)
 
 type Vector2 = Point2
 
@@ -67,10 +67,6 @@ instance Foldable Point2 where
   foldr :: (a -> b -> b) -> b -> Point2 a -> b
   foldr f start (P2 x y) = f x (f y start)
 
-instance (Eq a) => Eq (Point2 a) where
-  (==) :: Point2 a -> Point2 a -> Bool
-  (P2 x1 y1) == (P2 x2 y2) = (x1, y1) == (x2, y2)
-
 instance (Hashable a) => Hashable (Point2 a)
 
 instance (Show a) => Show (Point2 a) where
@@ -84,7 +80,7 @@ data Point3 a = P3 {
   p3Y :: a,
   p3Z :: a
 }
-  deriving (Generic)
+  deriving (Generic, Eq, Ord)
 
 type Vector3 = Point3
 
@@ -101,10 +97,6 @@ instance Applicative Point3 where
 instance Foldable Point3 where
   foldr :: (a -> b -> b) -> b -> Point3 a -> b
   foldr f start (P3 x y z) = f x $ f y $ f z start
-
-instance (Eq a) => Eq (Point3 a) where
-  (==) :: Point3 a -> Point3 a -> Bool
-  (P3 x1 y1 z1) == (P3 x2 y2 z2) = (x1, y1, z1) == (x2, y2, z2)
 
 instance (Hashable a) => Hashable (Point3 a)
 

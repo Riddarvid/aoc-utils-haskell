@@ -16,8 +16,8 @@ aocMain :: Config -> IO ()
 aocMain cfg = do
   options <- execParser opts
   case options of
-    Textual day     -> printSolutions cfg [day]
-    TextualAll      -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
+    Textual day -> printSolutions cfg [day]
+    TextualAll  -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
 
 -- Opts parsing
 

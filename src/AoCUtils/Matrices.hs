@@ -1,11 +1,9 @@
-module AoCUtils.Matrices (matrixToHashMap) where
+module AoCUtils.Matrices (matrixToMapList) where
 
 import           AoCUtils.Geometry (Point2 (P2))
-import           Data.HashMap.Lazy (HashMap)
-import qualified Data.HashMap.Lazy as HM
 
-matrixToHashMap :: [[a]] -> (HashMap (Point2 Int) a, Int, Int)
-matrixToHashMap input = (HM.fromList mapList, maxX, maxY)
+matrixToMapList :: [[a]] -> ([(Point2 Int, a)], Int, Int)
+matrixToMapList input = (mapList, maxX, maxY)
   where
     list = concat input
     maxY = length input - 1
