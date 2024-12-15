@@ -15,23 +15,22 @@ import           Control.Monad.Reader (MonadReader, ReaderT (runReaderT), asks)
 import           Control.Monad.State  (MonadState, StateT (runStateT), gets,
                                        modify)
 import           Data.Foldable        (toList)
-import           Data.Hashable        (Hashable)
-import           Data.HashMap.Lazy    (HashMap)
-import qualified Data.HashMap.Lazy    as HM
-import           Data.HashSet         (HashSet)
-import qualified Data.HashSet         as HS
 import           Data.List            (find)
+import           Data.Map             (Map)
+import qualified Data.Map             as Map
+import           Data.Set             (Set)
+import qualified Data.Set             as Set
 
 -- Exported functions
 
 data Goal n = GTarget n | GCond (n -> Bool) | GFull
 
-bfsPath :: (Hashable n, Foldable t) => n -> Goal n -> Adjacency t n -> Maybe (Path n)
+bfsPath :: (Ord n, Foldable t) => n -> Goal n -> Adjacency t n -> Maybe (Path n)
 bfsPath start goal adjacency = constructPath goal =<< endState
   where
     endState = execBFSM explore (mkEnv goal adjacency) (mkState start)
 
-bfsExplore :: (Hashable n, Foldable t) => n -> Goal n -> Adjacency t n -> Maybe (BfsState n)
+bfsExplore :: (Ord n, Foldable t) => n -> Goal n -> Adjacency t n -> Maybe (BfsState n)
 bfsExplore start goal adjacency = execBFSM explore (mkEnv goal adjacency) (mkState start)
 
 -- Internal functions
@@ -45,7 +44,7 @@ data BfsEnv t n = BFSE {
   bfsAdjacency :: Adjacency t n
 }
 
-mkEnv :: (Hashable n) => Goal n -> Adjacency t n -> BfsEnv t n
+mkEnv :: (Ord n) => Goal n -> Adjacency t n -> BfsEnv t n
 mkEnv goal adjacency = BFSE {
   bfsGoal = goal',
   bfsAdjacency = adjacency}
@@ -55,10 +54,10 @@ mkEnv goal adjacency = BFSE {
       GCond cond     -> mkGoalCond cond
       GFull          -> mkGoalFull
 
-mkGoalTarget :: Hashable n => n -> BfsMonad t n Bool
+mkGoalTarget :: Ord n => n -> BfsMonad t n Bool
 mkGoalTarget target = do
   lastLayer <- gets bfsLastLayer
-  return $ HS.member target lastLayer
+  return $ Set.member target lastLayer
 
 mkGoalCond :: (n -> Bool) -> BfsMonad t n Bool
 mkGoalCond cond = do
@@ -68,18 +67,18 @@ mkGoalCond cond = do
 mkGoalFull :: BfsMonad t n Bool
 mkGoalFull = do
   lastLayer <- gets bfsLastLayer
-  return $ HS.size lastLayer == 0
+  return $ Set.size lastLayer == 0
 
 data BfsState n = BFSS {
-  bfsPreMap    :: HashMap n (Maybe n),
-  bfsLastLayer :: HashSet n,
+  bfsPreMap    :: Map n (Maybe n),
+  bfsLastLayer :: Set n,
   bfsNLayers   :: Integer
 }
 
-mkState :: (Hashable n) => n -> BfsState n
+mkState :: n -> BfsState n
 mkState start = BFSS {
-  bfsPreMap = HM.singleton start Nothing,
-  bfsLastLayer = HS.singleton start,
+  bfsPreMap = Map.singleton start Nothing,
+  bfsLastLayer = Set.singleton start,
   bfsNLayers = 0}
 
 newtype BfsMonad t n a = BFSM (ReaderT (BfsEnv t n) (StateT (BfsState n) (Except ())) a)
@@ -97,16 +96,16 @@ evalBFSM m env st = fst <$> runBFSM m env st
 execBFSM :: BfsMonad t n a -> BfsEnv t n -> BfsState n -> Maybe (BfsState n)
 execBFSM m env st = snd <$> runBFSM m env st
 
-explore :: (Hashable n, Foldable t) => BfsMonad t n ()
+explore :: (Ord n, Foldable t) => BfsMonad t n ()
 explore = do
   done <- join $ asks bfsGoal
   unless done $ do
     lastLayer <- gets bfsLastLayer
-    if HS.size lastLayer == 0
+    if Set.size lastLayer == 0
       then throwError ()
       else exploreNextLayer >> explore
 
-constructPath :: (Hashable n) => Goal n -> BfsState n -> Maybe (Path n)
+constructPath :: (Ord n) => Goal n -> BfsState n -> Maybe (Path n)
 constructPath goal st = do
   node <- case goal of
     GTarget target -> return target
@@ -115,29 +114,29 @@ constructPath goal st = do
   constructPath' (bfsPreMap st) node []
 
 
-constructPath' :: (Hashable n) => HashMap n (Maybe n) -> n -> Path n -> Maybe (Path n)
+constructPath' :: (Ord n) => Map n (Maybe n) -> n -> Path n -> Maybe (Path n)
 constructPath' preMap node path = do
-  pre <- HM.lookup node preMap
+  pre <- Map.lookup node preMap
   let path' = node : path
   case pre of
     Nothing   -> return path'
     Just pre' -> constructPath' preMap pre' path'
 
-exploreNextLayer :: (Hashable n, Foldable t) => BfsMonad t n ()
+exploreNextLayer :: (Ord n, Foldable t) => BfsMonad t n ()
 exploreNextLayer = do
   lastLayer <- gets bfsLastLayer
-  currentLayer <- mconcat <$> mapM exploreNeighbors (HS.toList lastLayer)
+  currentLayer <- mconcat <$> mapM exploreNeighbors (Set.toList lastLayer)
   modify (\s -> s{bfsLastLayer = currentLayer})
   modify (\s -> s{bfsNLayers = 1 + bfsNLayers s})
 
-exploreNeighbors :: (Hashable n, Foldable t) => n -> BfsMonad t n (HashSet n)
+exploreNeighbors :: (Ord n, Foldable t) => n -> BfsMonad t n (Set n)
 exploreNeighbors node = do
   adjacency <- asks bfsAdjacency
   preMap <- gets bfsPreMap
   let neighbors = adjacency node
-  let neighbors' = filter (\x -> not $ HM.member x preMap) $ toList neighbors
+  let neighbors' = filter (\x -> not $ Map.member x preMap) $ toList neighbors
   mapM_ (addPredecessor node) neighbors'
-  return $ HS.fromList neighbors'
+  return $ Set.fromList neighbors'
 
-addPredecessor :: (Hashable n) => n -> n -> BfsMonad t n ()
-addPredecessor pre node = modify (\s -> s{bfsPreMap = HM.insert node (Just pre) (bfsPreMap s)})
+addPredecessor :: (Ord n) => n -> n -> BfsMonad t n ()
+addPredecessor pre node = modify (\s -> s{bfsPreMap = Map.insert node (Just pre) (bfsPreMap s)})

@@ -8,6 +8,12 @@ and this project adheres to the
 
 ## Unreleased
 
+## [1.3.0] - 2024-12-15
+
+### Changed
+
+- Map instead of HashMap in Graphs
+
 ## [1.2.0] - 2024-12-07
 
 ### Changed
