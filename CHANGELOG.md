@@ -8,6 +8,12 @@ and this project adheres to the
 
 ## Unreleased
 
+## [1.5.2] - 2024-12-26
+
+### Fixed
+
+- Revert change
+
 ## [1.5.1] - 2024-12-26
 
 ### Fixed
