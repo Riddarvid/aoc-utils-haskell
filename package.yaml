@@ -30,6 +30,7 @@ dependencies:
   - time
   - regex-pcre
   - filepath
+  - heaps
 
 ghc-options:
   - -Wall

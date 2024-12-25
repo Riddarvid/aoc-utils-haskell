@@ -8,6 +8,12 @@ and this project adheres to the
 
 ## Unreleased
 
+## [1.4.0] - 2024-12-25
+
+### Added
+
+- Dijkstra
+
 ## [1.3.0] - 2024-12-15
 
 ### Changed

@@ -27,6 +27,7 @@ library
   exposed-modules:
       AoCUtils.Config
       AoCUtils.Days
+      AoCUtils.Dijkstra
       AoCUtils.Geometry
       AoCUtils.Graphs
       AoCUtils.Interactive
@@ -45,6 +46,7 @@ library
     , containers
     , filepath
     , hashable
+    , heaps
     , mtl
     , optparse-applicative
     , parsec
