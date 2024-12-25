@@ -16,9 +16,9 @@ import           Data.Set      (Set)
 import qualified Data.Set      as Set
 import           Prelude       hiding (pred)
 
-type PredMap a = Map a (Maybe a, Int)
+type PredMap a = Map a ([a], Int)
 
-data DijkstraCost a = DC (Maybe a) Int
+data DijkstraCost a = DC [a] Int
 
 instance Eq (DijkstraCost a) where
   (==) :: DijkstraCost a -> DijkstraCost a -> Bool
@@ -34,7 +34,7 @@ type DijkstraHeap a = Heap (DijkstraEntry a)
 
 dijkstraFull :: Ord a => (a -> [(a, Int)]) -> a -> PredMap a
 dijkstraFull neighborsOf start =
-  dijkstraFull' neighborsOf (Heap.singleton (Entry (DC Nothing 0) start)) Set.empty Map.empty
+  dijkstraFull' neighborsOf (Heap.singleton (Entry (DC [] 0) start)) Set.empty Map.empty
 
 dijkstraFull' :: forall a. Ord a => (a -> [(a, Int)]) ->
   DijkstraHeap a -> Set a -> PredMap a -> PredMap a
@@ -53,7 +53,7 @@ dijkstraFull' neighborsOf = go
 
 dijkstraTarget :: Ord a => (a -> [(a, Int)]) -> (a -> Bool) -> a -> PredMap a
 dijkstraTarget neighborsOf isGoal start =
-  dijkstraTarget' neighborsOf isGoal (Heap.singleton (Entry (DC Nothing 0) start)) Set.empty Map.empty
+  dijkstraTarget' neighborsOf isGoal (Heap.singleton (Entry (DC [] 0) start)) Set.empty Map.empty
 
 dijkstraTarget' :: forall a. Ord a => (a -> [(a, Int)]) -> (a -> Bool) ->
   DijkstraHeap a -> Set a -> PredMap a -> PredMap a
@@ -72,20 +72,25 @@ dijkstraTarget' neighborsOf isGoal = go
           neighbors' = filter (\(Entry _ n) -> not $ Set.member n expanded) neighbors
           frontier'' = foldr updateFrontier frontier' neighbors'
 
+--------------- Common -----------------
+
 updateFrontier :: Eq a => DijkstraEntry a -> DijkstraHeap a -> DijkstraHeap a
-updateFrontier entry@(Entry (DC pred cost) node) heap =
+updateFrontier entry@(Entry (DC newPreds newCost) node) heap =
   case find (\(Entry _ node') -> node == node') heap of
     Nothing -> Heap.insert entry heap
-    Just (Entry (DC _ oldCost) _) -> if cost < oldCost
-      then Heap.map setCost heap
-      else heap
+    Just (Entry (DC _ oldCost) _) -> case compare newCost oldCost of
+      LT -> Heap.map setCost heap
+      EQ -> Heap.map appendCost heap
+      GT -> heap
   where
     setCost (Entry oldCost node')
-      | node == node' = Entry (DC pred cost) node'
+      | node == node' = Entry (DC newPreds newCost) node'
       | otherwise = Entry oldCost node'
-
+    appendCost (Entry oldCost@(DC oldPreds _) node')
+      | node == node' = Entry (DC (newPreds ++ oldPreds) newCost) node'
+      | otherwise = Entry oldCost node'
 
 neighborNodesOf :: (a -> [(a, Int)]) -> DijkstraEntry a -> [DijkstraEntry a]
 neighborNodesOf neighborsOf (Entry (DC _ cost) node) =
-  map (\(neighbor, moveCost) -> Entry (DC (Just node) (cost + moveCost)) neighbor) $
+  map (\(neighbor, moveCost) -> Entry (DC [node] (cost + moveCost)) neighbor) $
   neighborsOf node
