@@ -34,7 +34,8 @@ type DijkstraHeap a = Heap (DijkstraEntry a)
 
 dijkstraFull :: Ord a => (a -> [(a, Int)]) -> a -> PredMap a
 dijkstraFull neighborsOf start =
-  dijkstraFull' neighborsOf (Heap.singleton (Entry (DC [] 0) start)) Set.empty Map.empty
+  dijkstraFull' neighborsOf (Heap.singleton (Entry (DC [] 0) start))
+    Set.empty (Map.singleton start ([], 0))
 
 dijkstraFull' :: forall a. Ord a => (a -> [(a, Int)]) ->
   DijkstraHeap a -> Set a -> PredMap a -> PredMap a
@@ -53,7 +54,8 @@ dijkstraFull' neighborsOf = go
 
 dijkstraTarget :: Ord a => (a -> [(a, Int)]) -> (a -> Bool) -> a -> PredMap a
 dijkstraTarget neighborsOf isGoal start =
-  dijkstraTarget' neighborsOf isGoal (Heap.singleton (Entry (DC [] 0) start)) Set.empty Map.empty
+  dijkstraTarget' neighborsOf isGoal
+    (Heap.singleton (Entry (DC [] 0) start)) Set.empty (Map.singleton start ([], 0))
 
 dijkstraTarget' :: forall a. Ord a => (a -> [(a, Int)]) -> (a -> Bool) ->
   DijkstraHeap a -> Set a -> PredMap a -> PredMap a
