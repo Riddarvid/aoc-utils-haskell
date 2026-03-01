@@ -29,6 +29,7 @@ library
       AoCUtils.Days
       AoCUtils.Dijkstra
       AoCUtils.Geometry
+      AoCUtils.Graphics
       AoCUtils.Graphs
       AoCUtils.Interactive
       AoCUtils.Matrices
@@ -45,6 +46,7 @@ library
       base >=4.7 && <5
     , containers
     , filepath
+    , gloss
     , hashable
     , heaps
     , mtl
