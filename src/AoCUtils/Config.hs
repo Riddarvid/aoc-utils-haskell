@@ -11,14 +11,10 @@ data Config = Config {
   cfgVisualizations :: String -> IO ()
 }
 
-mkConfig :: [Solver] -> FilePath -> FilePath -> Maybe (String -> IO ()) -> Config
+mkConfig :: [Solver] -> FilePath -> FilePath -> (String -> IO ()) -> Config
 mkConfig solvers inputDir resultsDir vis = Config {
   cfgSolvers = solvers,
   cfgInputDir = inputDir,
   cfgResultsDir = resultsDir,
-  cfgVisualizations = vis'
+  cfgVisualizations = vis
   }
-  where
-    vis' = case vis of
-      Nothing    -> error "No visualizations provided"
-      Just vis'' -> vis''
