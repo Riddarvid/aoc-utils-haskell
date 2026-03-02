@@ -4,26 +4,26 @@ module AoCUtils.Interactive (
   printSolutions
 ) where
 
-import           AoCUtils.Config     (Config (cfgInputDir, cfgSolvers, cfgVisualizations))
+import           AoCUtils.Config     (Config (cfgCustomEntrypoint, cfgInputDir, cfgSolvers))
 import           AoCUtils.Days       (readInput, showSolution)
 import           Control.Applicative ((<**>), (<|>))
 import           Data.Time           (diffUTCTime, getCurrentTime)
 import           Options.Applicative (Parser, ParserInfo, argument, auto,
                                       execParser, fullDesc, header, help,
-                                      helper, info, metavar, progDesc, short,
-                                      strOption)
+                                      helper, info, long, metavar, progDesc,
+                                      short, switch)
 
 aocMain :: Config -> IO ()
 aocMain cfg = do
   options <- execParser opts
   case options of
-    Textual day     -> printSolutions cfg [day]
-    Graphical visId -> cfgVisualizations cfg visId
-    TextualAll      -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
+    Textual day -> printSolutions cfg [day]
+    TextualAll  -> printSolutions cfg [1 .. length $ cfgSolvers cfg]
+    Custom day  -> runCustom cfg day
 
 -- Opts parsing
 
-data ProgramOpts = Textual Int | Graphical String | TextualAll
+data ProgramOpts = Textual Int | TextualAll | Custom Int
 
 opts :: ParserInfo ProgramOpts
 opts = info (optsParser <**> helper)
@@ -32,21 +32,23 @@ opts = info (optsParser <**> helper)
   <> header "AoC Solver" )
 
 optsParser :: Parser ProgramOpts
-optsParser = textualParser <|> graphicalParser <|> allParser
+optsParser = withDayParser <|> noDayParser
 
-textualParser :: Parser ProgramOpts
-textualParser = Textual <$> argument auto (
-  metavar "DAY"
-  <> help "Day to run.")
+withDayParser :: Parser ProgramOpts
+withDayParser = toProgramOpts <$>
+  argument auto (
+    metavar "DAY"
+    <> help "Day to run") <*>
+  switch (
+    short 'e'
+    <> long "entrypoint"
+    <> help "Use custom entrypoint")
+  where
+    toProgramOpts day entrypoint = if entrypoint then Custom day else Textual day
 
-graphicalParser :: Parser ProgramOpts
-graphicalParser = Graphical <$> strOption
-  (short 'g'
-  <> metavar "VISUALIZATION"
-  <> help "Visualization to run")
+noDayParser :: Parser ProgramOpts
+noDayParser = pure TextualAll
 
-allParser :: Parser ProgramOpts
-allParser = pure TextualAll
 
 -- Textual interface
 
@@ -69,6 +71,11 @@ printSolution cfg day = do
   putStrLn $ showSolution solution
   stopTime <- getCurrentTime
   putStrLn $ "\nSolved in " ++ show (diffUTCTime stopTime startTime)
+
+runCustom :: Config -> Int -> IO ()
+runCustom cfg day = do
+  input <- readInput (cfgInputDir cfg) day
+  cfgCustomEntrypoint cfg input
 
 -- Utils ----------------------------
 
